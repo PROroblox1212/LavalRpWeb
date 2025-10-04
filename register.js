@@ -10,6 +10,10 @@ document.getElementById("submitbtn").addEventListener("click", async () => {
     const password = document.getElementById("password").value
     const rank = "none" 
 
+    if (!username || !email || !password) {
+        return;
+    }
+
     const { data, error } = await supabase
         .from("Comptes")
         .insert([{ username, password, email, rank }])
