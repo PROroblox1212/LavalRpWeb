@@ -8,9 +8,10 @@ document.getElementById("submitbtn").addEventListener("click", async () => {
     const email = document.getElementById("email").value
     const username = document.getElementById("username").value
     const password = document.getElementById("password").value
+    const checkBool = document.getElementById("checkboxBool").value
     const rank = "none" 
 
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !checkBool) {
         return;
     }
 
