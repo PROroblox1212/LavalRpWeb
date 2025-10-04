@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laval - Inscription</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      background-color: #000;
+    }
+
+    canvas#bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background-color: #000;
+    }
+
+    .register-box {
+      background: rgba(20, 20, 20, 0.8);
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.3);
+      text-align: center;
+      width: 340px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .register-box h1 {
+      font-size: 28px;
+      margin-bottom: 25px;
+      color: #00aaff;
+      text-shadow: 0 0 8px rgba(0, 170, 255, 0.8);
+    }
+
+    .register-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .register-box input::placeholder {
+      color: #aaa;
+    }
+
+    .register-box button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #ff0000, #0077ff);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 5px;
+    }
+
+    .register-box button:hover {
+      filter: brightness(1.2);
+      transform: scale(1.02);
+    }
+
+    .register-box p {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #bbb;
+    }
+
+    .register-box a {
+      color: #00aaff;
+      text-decoration: none;
+    }
+
+    .register-box a:hover {
+      text-decoration: underline;
+    }
+
+    /* Halo souris */
+    #halo {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <div id="halo"></div>
+
+  <div class="register-box">
+    <h1>Inscription Laval</h1>
+    <form id="registerForm" onsubmit="event.preventDefault()">
+      <input type="email" id="email" placeholder="Adresse e-mail" required>
+      <input type="text" id="username" placeholder="Nom d’utilisateur" required>
+      <input type="password" id="password" placeholder="Mot de passe" required>
+
+        <label>
+            <input type="checkbox" id="term" required style="margin-right: 8px;">
+            J’ai lu et j’accepte les <a href="conditions.html" target="_blank" style="color: #00aaff;">conditions d’utilisation</a>
+        </label>
+
+
+      <button type="submit" id="submitbtn">S’inscrire</button>
+    </form>
+    <p>Déjà un compte ? <a href="login.html">Se connecter</a></p>
+  </div>
+
+  <script>
+    // === FOND ANIMÉ ===
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    let particles = [];
+    let sparks = [];
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 1.5;
+        this.speedY = (Math.random() - 0.5) * 1.5;
+        this.color = Math.random() > 0.5 ? "rgba(255,0,0," : "rgba(0,102,255,";
+        this.life = Math.random() * 200 + 100;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life--;
+        if (this.x < 0 || this.x > w) this.speedX *= -1;
+        if (this.y < 0 || this.y > h) this.speedY *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + (this.life / 200) + ")";
+        ctx.fill();
+      }
+    }
+
+    class Spark {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 2 + 1;
+        this.life = 30 + Math.random() * 30;
+      }
+      update() {
+        this.life--;
+        this.y -= 0.5;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(255, 255, 0,"+(this.life/60)+")";
+        ctx.fill();
+      }
+    }
+
+    function connectParticles() {
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a; b < particles.length; b++) {
+          let dx = particles[a].x - particles[b].x;
+          let dy = particles[a].y - particles[b].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(255,0,0,0.15)";
+            if (Math.random() > 0.5) ctx.strokeStyle = "rgba(0,102,255,0.15)";
+            ctx.lineWidth = 1;
+            ctx.moveTo(particles[a].x, particles[a].y);
+            ctx.lineTo(particles[b].x, particles[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, w, h);
+
+      if (particles.length < 120) {
+        particles.push(new Particle());
+      }
+      particles.forEach((p, i) => {
+        p.update();
+        p.draw();
+        if (p.life <= 0) particles.splice(i, 1);
+      });
+
+      if (Math.random() < 0.05) {
+        sparks.push(new Spark());
+      }
+      sparks.forEach((s, i) => {
+        s.update();
+        s.draw();
+        if (s.life <= 0) sparks.splice(i, 1);
+      });
+
+      connectParticles();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // === HALO SOURIS ===
+    const halo = document.getElementById("halo");
+    document.addEventListener("mousemove", (e) => {
+      halo.style.left = e.pageX + "px";
+      halo.style.top = e.pageY + "px";
+    });
+  </script>
+  <script type="module" src="register.js"></script>
+</body>
+</html>
