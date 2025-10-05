@@ -1,7 +1,10 @@
+// Dans un fichier .js chargé avec <script type="module" src="loginscript.js"></script>
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
 const supabaseUrl = "https://bulvtqcdmkzztesxjjpt.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1bHZ0cWNkbWt6enRlc3hqanB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1ODcyMzEsImV4cCI6MjA3NTE2MzIzMX0.ZxK9kRefeiQyqZQS7zU6J1Y2CM0zd_tMAfwLi7nDB5g";
 
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const loginForm = document.getElementById('loginForm');
 
@@ -20,7 +23,7 @@ loginForm.addEventListener('submit', async (e) => {
     const { data, error } = await supabase
       .from('Comptes')
       .select('username')
-      .match({ username, password })  // Vérifie username + password
+      .match({ username, password })
       .single();
 
     if (error || !data) {
@@ -28,7 +31,7 @@ loginForm.addEventListener('submit', async (e) => {
       return;
     }
 
-    alert("Login réussi !"); // juste pour confirmer
+    alert("Login réussi !");
   } catch (err) {
     console.error("Erreur login:", err);
     alert("Erreur serveur, réessaie plus tard.");
