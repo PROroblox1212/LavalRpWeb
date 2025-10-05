@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/connexion", "destination": "/index.html" },
-    { "source": "/inscription", "destination": "/register.html" }
+    { "source": "/connexion", "destination": "index.html" },
+    { "source": "/inscription", "destination": "register.html" }
   ]
 }
