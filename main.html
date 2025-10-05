@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Laval RP — Portail</title>
+  <style>
+    :root{
+      --bg1: #0b0b10;
+      --bg2: #101024;
+      --panel: rgba(255,255,255,0.04);
+      --accent1: #00aaff;
+      --accent2: #ff3b3b;
+      --muted: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", Roboto, system-ui, -apple-system; background: linear-gradient(180deg,var(--bg1),var(--bg2)); color:#e9eef8}
+    .app {
+      display:flex;
+      height:100vh;
+      gap:22px;
+      padding:28px;
+      align-items:stretch;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width:260px;
+      min-width:220px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+      border-radius:16px;
+      padding:18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .brand {
+      display:flex;align-items:center;gap:12px;
+    }
+    .logo {
+      width:46px;height:46px;border-radius:10px;
+      background: linear-gradient(135deg,var(--accent2),var(--accent1));
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+    .brand h2{font-size:16px;margin:0}
+    .user {
+      background:var(--panel);padding:10px;border-radius:10px;font-size:13px;
+      display:flex;gap:10px;align-items:center;
+    }
+    .user .avatar{width:42px;height:42;border-radius:8px;background:linear-gradient(180deg,#222,#111);display:flex;align-items:center;justify-content:center;color:#fff}
+    .nav {display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .nav button {
+      text-align:left;padding:10px;border-radius:10px;border:none;background:transparent;color:var(--muted);cursor:pointer;
+      display:flex;align-items:center;gap:10px;font-size:14px;transition:all .18s;
+    }
+    .nav button:hover{transform:translateX(6px);color:#fff}
+    .nav button.active{background:linear-gradient(90deg, rgba(0,170,255,0.08), rgba(255,59,59,0.04));color:#fff;box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02)}
+    .version{margin-top:auto;font-size:12px;color:rgba(255,255,255,0.35);text-align:center}
+
+    /* MAIN CONTENT */
+    .main {
+      flex:1;display:flex;flex-direction:column;gap:18px;
+    }
+    .topbar {
+      height:68px;background:var(--panel);border-radius:14px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.4);
+    }
+    .search {
+      display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;
+      min-width:280px;
+    }
+    .search input{background:transparent;border:none;outline:none;color:#fff}
+    .content {
+      flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));border-radius:14px;padding:20px;overflow:auto;
+    }
+    h1.page-title{margin:0 0 12px 0;font-size:20px}
+    .card {background: rgba(255,255,255,0.03);padding:14px;border-radius:12px;margin-bottom:12px}
+    /* rules / announcements */
+    .rules {line-height:1.5;color:#dfe9f5}
+    .announce {display:flex;flex-direction:column;gap:10px}
+    .announce .item{background:rgba(0,0,0,0.25);padding:10px;border-radius:10px}
+
+    /* two columns */
+    .grid2{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .small {font-size:13px;color:var(--muted)}
+
+    /* casier / table */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
+    th{font-size:13px;color:var(--muted)}
+    tr:hover td{background:linear-gradient(90deg, rgba(0,170,255,0.02), rgba(255,59,59,0.01))}
+    .btn {background:var(--accent1);color:#022;padding:8px 10px;border-radius:8px;border:none;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
+
+    /* responsive */
+    @media (max-width:900px){
+      .app{flex-direction:column;padding:14px}
+      .sidebar{width:100%;display:flex;flex-direction:row;overflow:auto;padding:10px;border-radius:10px}
+      .main{width:100%}
+      .grid2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="logo">LR</div>
+        <div>
+          <h2>Laval RP</h2>
+          <div class="small">Portail communautaire</div>
+        </div>
+      </div>
+
+      <div class="user" id="userCard">
+        <div class="avatar" id="avatarTxt">A</div>
+        <div>
+          <div id="userNameSmall">—</div>
+          <div class="small" id="userEmailSmall">—</div>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <button data-page="regles" class="active">📜 Règlements</button>
+        <button data-page="annonces">📢 Annonces</button>
+        <button data-page="spvl">🚓 SPVL (Casier)</button>
+        <button data-page="sq">🛂 SQ (Casier)</button>
+        <button data-page="pompiers">🚒 Pompiers</button>
+        <button data-page="medic">🚑 Urgence Santé</button>
+        <button data-page="mtq">🚧 MTQ</button>
+        <button data-page="credits">⭐ Crédits</button>
+      </nav>
+
+      <div class="version">Connecté · <span id="userRank">—</span></div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div class="search">
+          🔎 <input id="globalSearch" placeholder="Recherche (règlement, nom, annonce...)" />
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="small" id="clock"></div>
+          <button class="btn ghost" id="profileBtn">Mon profil</button>
+          <button class="btn" id="logout">Se déconnecter</button>
+        </div>
+      </div>
+
+      <div class="content" id="content">
+        <!-- Règlements -->
+        <section id="reglesSection" class="page">
+          <h1 class="page-title">📜 Règlements</h1>
+          <div class="card rules">
+            <h3>Usage RP & règles de conduite</h3>
+            <ul>
+              <li>1. Respecter le RP — pas de HRP dans le RP.</li>
+              <li>2. Aucune insulte ciblée; pas de spam.</li>
+              <li>3. Respecter le staff et suivre les procédures (mandats, arrestations).</li>
+              <li>4. Pas d'abus d'armes / PK sans raison RP.</li>
+              <li>5. Suivre les protocoles SPVL / SQ / Pompiers lors d'intervention.</li>
+            </ul>
+            <p class="small">Dernière mise à jour : 2025-10-04</p>
+          </div>
+
+          <div class="card">
+            <h3>Procédures importantes</h3>
+            <p class="small">Comment demander un mandat, comment faire un rapport, rappel des sanctions.</p>
+            <button class="btn" onclick="alert('Téléchargement du PDF... (exemple)')">Télécharger le guide complet</button>
+          </div>
+        </section>
+
+        <!-- Annonces -->
+        <section id="annoncesSection" class="page" style="display:none">
+          <h1 class="page-title">📢 Annonces récentes</h1>
+          <div class="announce">
+            <div class="item">
+              <strong>[2025-10-01]</strong> Nouveau pack SPVL déployé — vérifiez vos véhicules.
+            </div>
+            <div class="item">
+              <strong>[2025-09-28]</strong> Événement communautaire ce weekend — inscriptions ouvertes.
+            </div>
+          </div>
+
+          <div style="margin-top:14px;" class="card">
+            <h3>Poster une annonce (staff)</h3>
+            <div class="small">Seuls les comptes avec rang "directeur" ou "admin" peuvent poster.</div>
+            <textarea id="announceText" rows="3" style="width:100%;margin-top:8px;border-radius:8px;padding:8px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.04)"></textarea>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="btn" id="postAnn">Poster</button>
+              <button class="btn ghost" id="clearAnn">Effacer</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- SPVL Casier -->
+        <section id="spvlSection" class="page" style="display:none">
+          <h1 class="page-title">🚓 SPVL — Casier judiciaire</h1>
+          <div class="grid2">
+            <div>
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div>
+                    <strong>Liste des fiches</strong>
+                    <div class="small">SPVL - Recherche par nom</div>
+                  </div>
+                  <input id="spvlSearch" placeholder="Recherche nom..." style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#fff"/>
+                </div>
+
+                <div style="margin-top:12px">
+                  <table id="spvlTable">
+                    <thead><tr><th>Nom</th><th>Infraction</th><th>Action</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <aside>
+              <div class="card">
+                <strong>Détail fiche</strong>
+                <div id="spvlDetail" style="margin-top:10px">Sélectionne une fiche pour voir le détail.</div>
+              </div>
+
+              <div class="card">
+                <strong>Actions</strong>
+                <div style="margin-top:8px" class="small">Seuls les agents SPVL peuvent émettre/modifier des casiers.</div>
+                <button class="btn ghost" id="newSpvl">Nouvelle fiche</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- SQ Casier -->
+        <section id="sqSection" class="page" style="display:none">
+          <h1 class="page-title">🛂 SQ — Casier judiciaire</h1>
+          <div class="card">
+            <p class="small">Table de casiers SQ (lecture publique limitée selon rang).</p>
+            <table id="sqTable">
+              <thead><tr><th>Nom</th><th>Récap</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Pompiers -->
+        <section id="pompiersSection" class="page" style="display:none">
+          <h1 class="page-title">🚒 Pompiers</h1>
+          <div class="card">
+            <strong>Protocoles véhicules</strong>
+            <p class="small">Instructions d'intervention, checklists, radiocommunication.</p>
+            <ul>
+              <li>Procédure A: Feu résidentiel — sécuriser la zone</li>
+              <li>Procédure B: Feu route — coordination MTQ</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Urgence Santé -->
+        <section id="medicSection" class="page" style="display:none">
+          <h1 class="page-title">🚑 Urgence Santé</h1>
+          <div class="card">
+            <strong>Protocole médical</strong>
+            <p class="small">Triage, évacuation, rapports à soumettre après intervention.</p>
+          </div>
+        </section>
+
+        <!-- MTQ -->
+        <section id="mtqSection" class="page" style="display:none">
+          <h1 class="page-title">🚧 MTQ</h1>
+          <div class="card">
+            <strong>Travaux & Signalisation</strong>
+            <p class="small">Coordonner avec Pompiers pour fermetures de routes.</p>
+          </div>
+        </section>
+
+        <!-- Credits -->
+        <section id="creditsSection" class="page" style="display:none">
+          <h1 class="page-title">⭐ Crédits</h1>
+          <div class="card">
+            <p>Développé par <strong>proroblox1212</strong></p>
+            <p class="small">Merci à la communauté Laval RP & aux contributeurs.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal simple pour voir détail (inline) -->
+  <div id="modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.6)">
+    <div style="background:linear-gradient(180deg,#081526,#0b1230);padding:18px;border-radius:12px;width:520px;color:#fff;">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="modalTitle">Détail</strong>
+        <button id="modalClose" style="background:transparent;border:none;color:#fff;cursor:pointer">✖</button>
+      </div>
+      <div id="modalBody" style="margin-top:12px;font-size:14px"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- session ----------
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) {
+      window.location.href = '/connexion'; // non connecté -> connexion
+    }
+
+    // populate user card
+    document.getElementById('userNameSmall').textContent = user.username || user.nom || 'Utilisateur';
+    document.getElementById('userEmailSmall').textContent = user.email || '';
+    document.getElementById('avatarTxt').textContent = (user.username || 'U').slice(0,1).toUpperCase();
+    document.getElementById('userRank').textContent = (user.rank || 'Citoyen').toUpperCase();
+
+    // clock
+    function updateClock(){ document.getElementById('clock').textContent = new Date().toLocaleString(); }
+    updateClock(); setInterval(updateClock, 1000);
+
+    // ---------- navigation ----------
+    const navButtons = Array.from(document.querySelectorAll('.nav button'));
+    const pages = {
+      regles: document.getElementById('reglesSection'),
+      annonces: document.getElementById('annoncesSection'),
+      spvl: document.getElementById('spvlSection'),
+      sq: document.getElementById('sqSection'),
+      pompiers: document.getElementById('pompiersSection'),
+      medic: document.getElementById('medicSection'),
+      mtq: document.getElementById('mtqSection'),
+      credits: document.getElementById('creditsSection')
+    };
+
+    function showPage(key){
+      Object.values(pages).forEach(p => p.style.display = 'none');
+      pages[key].style.display = '';
+      navButtons.forEach(b => b.classList.toggle('active', b.dataset.page === key));
+      // clear search fields
+      document.getElementById('globalSearch').value = '';
+    }
+
+    navButtons.forEach(btn => btn.addEventListener('click', () => showPage(btn.dataset.page)));
+    // default
+    showPage('regles');
+
+    // ---------- global search ----------
+    document.getElementById('globalSearch').addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      // simple behavior: if search includes 'annonce' -> open annonces, 'casier' or 'spvl' -> spvl, etc.
+      if (!q) return;
+      if (q.includes('annonce')) return showPage('annonces');
+      if (q.includes('règle') || q.includes('regle') || q.includes('règlement')) return showPage('regles');
+      if (q.includes('spvl')) return showPage('spvl');
+      if (q.includes('sq')) return showPage('sq');
+      if (q.includes('pompier')) return showPage('pompiers');
+      if (q.includes('mtq')) return showPage('mtq');
+    });
+
+    // ---------- logout ----------
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('user');
+      window.location.href = '/connexion';
+    });
+
+    // ---------- Announcements posting (demo) ----------
+    document.getElementById('postAnn').addEventListener('click', () => {
+      // only allow if rank admin/director
+      const allowed = ['directeur','admin','fondateur'];
+      if (!allowed.includes((user.rank||'').toLowerCase())) {
+        return alert('Tu n\'as pas la permission de poster des annonces.');
+      }
+      const text = document.getElementById('announceText').value.trim();
+      if (!text) return alert('Texte vide.');
+      // simulated post (in real: push to Supabase then reload)
+      const el = document.createElement('div');
+      el.className = 'item';
+      el.innerHTML = `<strong>[${new Date().toLocaleDateString()}]</strong> ${escapeHtml(text)}`;
+      document.querySelector('#annoncesSection .announce').prepend(el);
+      document.getElementById('announceText').value = '';
+      alert('Annonce postée (demo).');
+    });
+    document.getElementById('clearAnn').addEventListener('click', ()=> document.getElementById('announceText').value='');
+
+    // ---------- SPVL demo data ----------
+    const spvlData = [
+      { id:1, name:'Jean Tremblay', infraction:'Conduite dangereuse', details:'Arrestation: 2025-09-10. Amende 500$.' },
+      { id:2, name:'Lucie Roy', infraction:'Vol', details:'Vol magasin, dossier en cours. Mandat demandé.' },
+      { id:3, name:'Marc Gagnon', infraction:'Délit de fuite', details:'Incident routier, juge: audience 2025-11-02.' }
+    ];
+
+    function renderSpvlTable(list){
+      const tbody = document.querySelector('#spvlTable tbody');
+      tbody.innerHTML = '';
+      list.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.infraction)}</td><td><button class="btn ghost" data-id="${r.id}">Voir</button></td>`;
+        tbody.appendChild(tr);
+      });
+      // attach view handlers
+      tbody.querySelectorAll('button[data-id]').forEach(b=> b.addEventListener('click', ()=>{
+        const id = +b.dataset.id;
+        const item = spvlData.find(x=>x.id===id);
+        showModal(item.name, `<strong>Infraction:</strong> ${escapeHtml(item.infraction)}<hr><div>${escapeHtml(item.details)}</div>`);
+      }));
+    }
+    renderSpvlTable(spvlData);
+
+    document.getElementById('spvlSearch').addEventListener('input', (e)=>{
+      const q = e.target.value.toLowerCase();
+      renderSpvlTable(spvlData.filter(x=>x.name.toLowerCase().includes(q)));
+    });
+
+    document.getElementById('newSpvl').addEventListener('click', ()=>{
+      const allowed = ['directeur','admin','spvl'];
+      if (!allowed.includes((user.rank||'').toLowerCase())) return alert('Permission refusée.');
+      const name = prompt('Nom de la personne:');
+      if (!name) return;
+      const infraction = prompt('Infraction résumé:');
+      const details = prompt('Détails de la fiche:');
+      const id = spvlData.length + 1;
+      spvlData.unshift({id,name,infraction,details});
+      renderSpvlTable(spvlData);
+      alert('Fiche ajoutée (demo).');
+    });
+
+    // ---------- SQ demo table ----------
+    const sqData = [
+      {id:1,name:'Alice Dubois', summary:'Trafique', details:'Enquête en cours.'},
+      {id:2,name:'Pierre Noel', summary:'Fraude', details:'Condamnation 2023.'}
+    ];
+    function renderSq(){
+      const tbody = document.querySelector('#sqTable tbody');
+      tbody.innerHTML = '';
+      sqData.forEach(r=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.summary)}</td><td><button class="btn ghost" data-id="${r.id}">Voir</button></td>`;
+        tbody.appendChild(tr);
+      });
+      tbody.querySelectorAll('button[data-id]').forEach(b=> b.addEventListener('click', ()=>{
+        const id = +b.dataset.id;
+        const it = sqData.find(x=>x.id===id);
+        showModal(it.name, `<strong>Résumé:</strong> ${escapeHtml(it.summary)}<hr>${escapeHtml(it.details)}`);
+      }));
+    }
+    renderSq();
+
+    // ---------- modal ----------
+    const modal = document.getElementById('modal');
+    function showModal(title, html){
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').innerHTML = html;
+      modal.style.display = 'flex';
+    }
+    document.getElementById('modalClose').addEventListener('click', ()=> modal.style.display='none');
+    modal.addEventListener('click', (e)=> { if (e.target===modal) modal.style.display='none'; });
+
+    // ---------- helper ----------
+    function escapeHtml(s){ if(!s) return ''; return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+    // ---------- TODO: brancher Supabase ----------
+    // Si tu veux récupérer les vrais casiers depuis Supabase, décommente et configure :
+    /*
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    const supabaseUrl = 'https://...';
+    const supabaseKey = '...';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Exemple d'appel
+    async function loadSpvlFromDB(){
+      const { data, error } = await supabase.from('spvl_casier').select('*').order('id',{ascending:false});
+      if (data) { 
+         // map data dans spvlData et renderSpvlTable()
+      }
+    }
+    loadSpvlFromDB();
+    */
+
+  </script>
+</body>
+</html>
