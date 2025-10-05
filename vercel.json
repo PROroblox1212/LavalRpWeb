@@ -1,6 +1,10 @@
 {
   "rewrites": [
-    { "source": "/connexion", "destination": "index.html" },
-    { "source": "/inscription", "destination": "register.html" }
+    { "source": "/connexion", "destination": "/index.html" },
+    { "source": "/inscription", "destination": "/register.html" }
+  ],
+  "redirects": [
+    { "source": "/index.html", "destination": "/connexion", "permanent": true },
+    { "source": "/register.html", "destination": "/inscription", "permanent": true }
   ]
 }
