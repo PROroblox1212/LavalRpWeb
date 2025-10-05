@@ -37,7 +37,7 @@ loginForm.addEventListener('submit', async (e) => {
       .from('Comptes')
       .select('username, email, rank')
       .eq('username', username)
-      .eq('password', password) // ⚠️ mot de passe en clair pour l'instant
+      .eq('password', password)
       .single();
 
     if (error || !data) {
